@@ -5,16 +5,16 @@ import numpy as np
 def send_data(char_count, trials):
     data = np.ones(char_count + MPI.BSEND_OVERHEAD, dtype=np.byte)
     sent = 0
-    world_rank = comm.Get_rank()
+    world_rank = comm.Get_rank() 
     partner_rank = (world_rank + 1) % 2
 
     while sent < trials:
         sent += 1
         if world_rank == sent % 2:
-            comm.Bsend(data, dest=partner_rank, tag=0)
+            comm.bsend(data, dest=partner_rank, tag=0)
         else:
-            comm.recv(data, source=partner_rank, status=None, tag=0)
-
+            _ = comm.recv(source=partner_rank, status=None, tag=0)
+    
     return
 
 
@@ -25,14 +25,22 @@ def store_to_file(data, size):
     output_one_node_MPI_RSend
     output_two_nodes_MPI_RSend
     """
-    with open("/home/students/f/o/forostia/sem1/tpr_lab/output_two_nodes_MPI_BSend.txt", "w+") as fp:
+    with open("/home/students/f/o/forostia/sem1/tpr_lab/output_one_node_MPI_BSend.txt", "w+") as fp:
         for i in range(size):
             fp.write(str(data[i]) + "\n")
 
 
 comm = MPI.COMM_WORLD
 world_rank = comm.Get_rank()
-max_char_count = 2#5000  # 500MB
+
+if world_rank == 0:
+    MPI.Attach_buffer(np.zeros(MPI.BSEND_OVERHEAD * 10))
+comm.Barrier()
+if world_rank == 1:
+    MPI.Attach_buffer(np.zeros(MPI.BSEND_OVERHEAD * 10))
+
+
+max_char_count = 5000  # 500MB
 data_sending_duration = np.zeros(max_char_count, dtype=np.double)
 trials = 1000
 
@@ -43,5 +51,9 @@ for i in range(1, max_char_count):
 
 if world_rank == 0:
     store_to_file(data_sending_duration, max_char_count)
+    MPI.Detach_buffer()
+else:
+   MPI.Detach_buffer()
 
 MPI.Finalize()
+
