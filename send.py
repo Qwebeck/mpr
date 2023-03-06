@@ -2,6 +2,7 @@
 from mpi4py import MPI
 import numpy as np
 
+
 def send_data(char_count, trials):
     data = np.ones(char_count + MPI.BSEND_OVERHEAD, dtype=np.byte)
     sent = 0
@@ -11,7 +12,7 @@ def send_data(char_count, trials):
     while sent < trials:
         sent += 1
         if world_rank == sent % 2:
-            comm.Bsend(data, dest=partner_rank, tag=0)
+            comm.send(data, dest=partner_rank, tag=0)
         else:
             comm.recv(data, source=partner_rank, status=None, tag=0)
 
@@ -32,7 +33,7 @@ def store_to_file(data, size):
 
 comm = MPI.COMM_WORLD
 world_rank = comm.Get_rank()
-max_char_count = 2#5000  # 500MB
+max_char_count = 5000  # 500MB
 data_sending_duration = np.zeros(max_char_count, dtype=np.double)
 trials = 1000
 
