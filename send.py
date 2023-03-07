@@ -4,7 +4,7 @@ import numpy as np
 
 
 def send_data(char_count, trials):
-    data = np.ones(char_count + MPI.BSEND_OVERHEAD, dtype=np.byte)
+    data = np.ones(char_count, dtype=np.byte)
     sent = 0
     world_rank = comm.Get_rank()
     partner_rank = (world_rank + 1) % 2
