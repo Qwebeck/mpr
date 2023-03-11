@@ -1,5 +1,7 @@
 #!/usr/bin/python
 from mpi4py import MPI
+import os
+import sys
 import numpy as np
 
 
@@ -19,33 +21,29 @@ def send_data(char_count, trials):
     return
 
 
-def store_to_file(data):
-    """
-    output_one_node_MPI_Send
-    output_two_nodes_MPI_Send
-    output_one_node_MPI_RSend
-    output_two_nodes_MPI_RSend
-    """
-    with open("./output_one_node_MPI_send.txt", "w+") as fp:
+def write_to_file(write_to, data):
+    with open(f"./{write_to}", "w+") as fp:
         for i in range(len(data)):
             fp.write(str(data[i]) + "\n")
 
 
-comm = MPI.COMM_WORLD
-world_rank = comm.Get_rank()
-max_char_count = 50000000  # 500MB
-step = 10000
-data_sending_duration = np.zeros(max_char_count / step, dtype=np.double)
-trials = 1000
+if __name__ == '__main__':
+    comm = MPI.COMM_WORLD
+    world_rank = comm.Get_rank()
+    max_char_count = 50000000  # 50MB
+    step = 10000
+    data_sending_duration = np.zeros(
+        int(max_char_count / step), dtype=np.double)
+    trials = 1000
 
-for i, d_size in enumerate(range(1, max_char_count, step)):
-    elapsed_time = MPI.Wtime()
-    send_data(d_size, trials)
-    data_sending_duration[i - 1] = (MPI.Wtime() - elapsed_time) / trials / 2
+    for i, d_size in enumerate(range(1, max_char_count, step)):
+        elapsed_time = MPI.Wtime()
+        send_data(d_size, trials)
+        data_sending_duration[i -
+                              1] = (MPI.Wtime() - elapsed_time) / trials / 2
 
-if world_rank == 0:
-    store_to_file(data_sending_duration)
+    if world_rank == 0:
+        write_to = sys.argv[1]
+        write_to_file(write_to, data_sending_duration)
 
-
-
-MPI.Finalize()
+    MPI.Finalize()
