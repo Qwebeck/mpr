@@ -17,16 +17,13 @@ def random_points(n):
 
 if __name__ == '__main__':
     comm = MPI.COMM_WORLD
-    size = comm.size()
+    size = comm.size
     world_rank = comm.Get_rank()
     points_per_proc = 1e6
 
     in_circle = random_points(points_per_proc)
     result = np.array(0, dtype=np.longlong)
-
     comm.Reduce(in_circle, result, op=MPI.SUM, root=0)
-
     if world_rank == 0:
-        print(f'Pi: {4 * in_circle / (points_per_proc * size)}')
+        print(4 * in_circle / (points_per_proc * size))
 
-    comm.Disconnect()

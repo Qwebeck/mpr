@@ -16,7 +16,7 @@ def send_data(char_count, trials):
         if world_rank == sent % 2:
             comm.Ssend(data, dest=partner_rank, tag=0)
         else:
-            _ = comm.recv(source=partner_rank, status=None, tag=0)
+            comm.Recv(data, source=partner_rank, status=None, tag=0)
 
     return (MPI.Wtime() - elapsed_time) / trials / 2
 
@@ -40,8 +40,7 @@ if __name__ == '__main__':
         data_sending_duration[i -
                               1] = send_data(d_size, trials)
 
-    if world_rank == 0:
-        write_to = sys.argv[1]
-        write_to_file(write_to, data_sending_duration)
+        if world_rank == 0:
+            write_to = sys.argv[1]
+            write_to_file(write_to, data_sending_duration)
 
-    MPI.Finalize()
