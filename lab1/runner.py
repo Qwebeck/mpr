@@ -16,7 +16,7 @@ send_files = [
 
 if __name__ == '__main__':
     for (allnodes, send) in product(allnodes_files, send_files):
-        print(f'starting experiment: {allnodes} {send_files}')
-        write_to = f'{allnodes}_{send}.txt'
+        print('starting experiment: {} {}'.format(allnodes, send_files))
+        write_to = '{}_{}.txt'.format(allnodes, send)
         os.system(
-            f'mpiexec -machinefile ./{allnodes} -np 2 ./{send}.py ./{write_to}')
+            'mpiexec -machinefile ./{0} -np 2 ./{1}.py ./{2}'.format(allnodes, send, write_to))

@@ -21,7 +21,7 @@ def send_data(char_count, trials):
 
 
 def write_to_file(write_to, data):
-    with open(f"./{write_to}", "w+") as fp:
+    with open("./{}".format(write_to), "w+") as fp:
         for i in range(len(data)):
             fp.write(str(data[i]) + "\n")
 
