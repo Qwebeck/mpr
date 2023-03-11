@@ -4,15 +4,29 @@ import random
 import numpy as np
 import sys
 
-points_per_proc = 1e6
-proc_count = 5
-comm = MPI.COMM_SELF.Spawn(sys.executable,
-                           args=['monte_carlo.py'],
-                           maxprocs=proc_count,
-                           root=0)
 
-IN_CIRCLE = np.array(0.0, dtype=np.longlong)
-comm.Reduce(None, IN_CIRCLE, op=MPI.SUM, root=MPI.ROOT)
-print(f'Pi: {4 * IN_CIRCLE / points_per_proc}')
+def is_in_circle(x, y):
+    return x ** 2 + y ** 2 < 1
 
-comm.Disconnect()
+
+def random_points(n):
+    X = np.random.rand(n, 2)
+    in_circle = np.count_nonzero(is_in_circle(X[:, 0], X[:, 1]))
+    return np.array(in_circle, dtype=np.longlong)
+
+
+if __name__ == '__main__':
+    comm = MPI.COMM_WORLD
+    size = comm.size()
+    world_rank = comm.Get_rank()
+    points_per_proc = 1e6
+
+    in_circle = random_points(points_per_proc)
+    result = np.array(0, dtype=np.longlong)
+
+    comm.Reduce(in_circle, result, op=MPI.SUM, root=0)
+
+    if world_rank == 0:
+        print(f'Pi: {4 * in_circle / (points_per_proc * size)}')
+
+    comm.Disconnect()
