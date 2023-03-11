@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 from mpi4py import MPI
-import random 
+import random
 import numpy as np
 
-def is_in_circle(x,y):
+
+def is_in_circle(x, y):
     return x ** 2 + y ** 2 < 1
+
 
 def random_points(n):
     X = np.random.rand(n, 2)
@@ -12,12 +14,9 @@ def random_points(n):
     return in_circle, n
 
 
-
-if __name__ = '__main__':
+if __name__ == '__main__':
     comm = MPI.Comm.Get_parent()
-    size = comm.Get_size()
-    rank = comm.Get_rank()
     n = 1000000
     circle, n = random_points(n)
-    N = numpy.array(0, dtype='i')
-    comm.Bcast([N, circle], root=0)
+    N = np.array(0, dtype=np.longlong)
+    comm.send([circle], dest=0)

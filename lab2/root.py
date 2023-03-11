@@ -1,16 +1,18 @@
 #!/usr/bin/env python
 from mpi4py import MPI
-import random 
+import random
 import numpy as np
+import sys
 
+points_per_proc = 1e6
+proc_count = 5
 comm = MPI.COMM_SELF.Spawn(sys.executable,
                            args=['monte_carlo.py'],
-                           maxprocs=5)
+                           maxprocs=proc_count,
+                           root=0)
 
-N = numpy.array(100_000_000, dtype=np.byte)
-comm.Bcast([N, MPI.MPI_LONG], root=MPI.ROOT)
-PI = numpy.array(0.0, 'd')
-comm.Reduce(None, [PI, MPI.DOUBLE],
-            op=MPI.SUM, root=MPI.ROOT)
+IN_CIRCLE = np.array(0.0, dtype=np.longlong)
+comm.Reduce(None, IN_CIRCLE, op=MPI.SUM, root=MPI.ROOT)
+print(f'Pi: {4 * IN_CIRCLE / points_per_proc}')
 
 comm.Disconnect()
