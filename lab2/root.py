@@ -21,9 +21,10 @@ if __name__ == '__main__':
     world_rank = comm.Get_rank()
     points_per_proc = 1e6
 
+    elapsed_time = MPI.Wtime()
     in_circle = random_points(points_per_proc)
     result = np.array(0, dtype=np.longlong)
     comm.Reduce(in_circle, result, op=MPI.SUM, root=0)
     if world_rank == 0:
         print(4 * in_circle / (points_per_proc * size))
-
+        print('Elapsed time:', MPI.Wtime() - elapsed_time)
