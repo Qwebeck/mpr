@@ -25,5 +25,6 @@ def run_scaling_experiment(scaling_type):
 
 
 if __name__ == '__main__':
-    run_scaling_experiment('strong')
-    run_scaling_experiment('weak')
+    for _ in range(30):
+        run_scaling_experiment('strong')
+        run_scaling_experiment('weak')
