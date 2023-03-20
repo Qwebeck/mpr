@@ -11,7 +11,7 @@ import os
 
 small = 1e6
 medium = 1e7
-large = 1e10
+large = 3e10
 
 
 def run_scaling_experiment(scaling_type):
@@ -25,6 +25,6 @@ def run_scaling_experiment(scaling_type):
 
 
 if __name__ == '__main__':
-    for _ in range(30):
+    for _ in range(15):
         run_scaling_experiment('strong')
         run_scaling_experiment('weak')
