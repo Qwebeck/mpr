@@ -11,7 +11,7 @@ def is_in_circle(x, y):
 
 def random_points(n):
     total_in_circle = 0
-    max_points_in_memory = int(1e6)
+    max_points_in_memory = int(int(1e6) / 13)
     for _ in range(int(n / max_points_in_memory)):
         X = np.random.rand(max_points_in_memory, 2)
         in_circle = np.count_nonzero(is_in_circle(X[:, 0], X[:, 1]))
