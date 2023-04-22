@@ -1,0 +1,2 @@
+total_time,numbers_generation_time,bucket_distibution_time,bucket_sort_time,bucket_join_time
+-2287.914728,0.000690,0.006085,0.009784,0.000902
